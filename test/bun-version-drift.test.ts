@@ -87,4 +87,15 @@ describe('bun version pins', () => {
       ).toBe(true);
     }
   });
+
+  test('every CI surface pins a Bun patched for CVE-2026-111497 (Brotli decoder)', () => {
+    // Bun >=1.0.21 <1.4.4 bundles a Brotli decoder with an out-of-bounds write
+    // (GHSA-663w-cv8g-jj2p, CISA KEV). No 1.3.x patch exists.
+    for (const pin of collectPins()) {
+      expect(
+        Bun.semver.satisfies(pin.version, '>=1.4.4'),
+        `${pin.surface} pins Bun ${pin.version}; Bun >=1.4.4 is required (CVE-2026-111497)`,
+      ).toBe(true);
+    }
+  });
 });
